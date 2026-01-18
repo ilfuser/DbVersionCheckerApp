@@ -107,6 +107,8 @@
             this.Controls.Add(this.btnConnect);
             this.Name = "Form1";
             this.Text = "Get Version Prototype";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosed);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -8,9 +8,13 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Mime;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 
 namespace DbVersionCheckGUI
 {
@@ -18,13 +22,19 @@ namespace DbVersionCheckGUI
     {
 
         private readonly HttpClient _httpClient;
-        private readonly string BaseUrl = ConfigurationManager.AppSettings["BaseUrl"];
-        //"http://localhost:63855";        
+        private readonly string BaseUrl = ConfigurationManager.AppSettings["BaseUrl"];        
+
+        private readonly string _sessionId;
 
         public Form1()
         {
             InitializeComponent();
-            _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };
+
+            _sessionId = Guid.NewGuid().ToString();
+            
+            _httpClient = new HttpClient { BaseAddress = new Uri(BaseUrl) };            
+            
+            _httpClient.DefaultRequestHeaders.Add("X-Session-ID", _sessionId);
         }
 
         private async void btnConnect_Click(object sender, EventArgs e)
@@ -39,6 +49,22 @@ namespace DbVersionCheckGUI
         private async void btnDisconnect_Click(object sender, EventArgs e)
         {
             await CallApi("/api/database/disconnect");
+        }       
+        
+
+        private async void btnSessions_Click(object sender, EventArgs e)
+        {
+            await CallApi("/api/database/current_sessions");
+        }
+
+        private async void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            await CallApi("/api/database/disconnect");
+        }
+
+        private async void Form1_FormClosed(object sender, FormClosingEventArgs e)
+        {
+            await CallApi("/api/database/disconnect");
         }
 
 
@@ -51,42 +77,36 @@ namespace DbVersionCheckGUI
                 rawJson = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
-                {                    
+                {
                     var parsed = JToken.Parse(rawJson);
-                    txtResult.Text = parsed.ToString(Formatting.Indented);                    
+                    txtResult.Text = parsed.ToString(Formatting.Indented);
                     return;
                 }
 
-                
+
                 if (endpoint.Contains("version"))
                 {
-                    rawJson = rawJson.Replace("\\\\","\\");
-                    
+                    rawJson = rawJson.Replace("\\\\", "\\");
+
                     var versionObj = JsonConvert.DeserializeObject<dynamic>(rawJson);
-                    
+
                     string versionText = versionObj.Version?.ToString() ?? "Неизвестно";
                     txtResult.Text = "Версия SQL Server: \n\n" + versionText;
                 }
                 else
-                {                
+                {
                     var parsed = JToken.Parse(rawJson);
                     txtResult.Text = parsed.ToString(Formatting.Indented);
                 }
             }
             catch (JsonReaderException)
-            {                
+            {
                 txtResult.Text = rawJson;
             }
             catch (Exception ex)
             {
                 txtResult.Text = "Ошибка:\n" + ex.Message;
             }
-        }
-        
-
-        private async void btnSessions_Click(object sender, EventArgs e)
-        {
-            await CallApi("/api/database/current_sessions");
         }
     }
 }

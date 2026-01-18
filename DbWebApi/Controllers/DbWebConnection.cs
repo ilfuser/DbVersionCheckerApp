@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
@@ -6,49 +7,68 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using System.Web.Services.Description;
+using System.Web.UI.WebControls;
 
 namespace WebApp4.Controllers
 {
     public class DbWebConnectionController : ApiController
     {
-        private static SqlConnection _connection;
-        private static string _сonnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-        private static int _connectionTries = 0;
+        //private static SqlConnection _connection;
+        private static string _сonnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;        
         private static int _currentConnections = 0;
-        private static List<object> _activeSessions = new List<object>();
+        private static ConcurrentDictionary<string, SqlConnection> _sessions = new ConcurrentDictionary<string, SqlConnection>();
+
 
         [HttpGet]
         [Route("api/database/connect")]
         public IHttpActionResult Connect()
         {
+            string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
+            string message = "Подключение...";
+            SqlConnection conn = null;
+
             try
             {
-                string message = "Подключение...";
-                if (_connection == null || _connection.State != System.Data.ConnectionState.Open)
+                if (!_sessions.ContainsKey(session))
                 {
-                    //_сonnectionString = 
-                    _connection = new SqlConnection(_сonnectionString);
-                    _connection.Open();
-                    _connectionTries++;
-                    //_activeSessions.Add(new 
-                    //{ 
-                    //    Session = _activeSessions.Count, 
-                    //    SessionId = _connection.ClientConnectionId 
-                    //});
+                    conn = new SqlConnection(_сonnectionString);
                     
-                    message = "Подключение успешно.";
+                    if (_sessions.TryAdd(session, conn))
+                    {
+                        conn.Open();
+                        message = "Подключение успешно.";
+                    }
+                    else
+                    {
+                        throw new Exception("Не удалось добавить подключение в список подключений");
+                    }                    
                 }
-                else
+                else 
                 {
-                    message = "Подключение уже существует.";
-                }
-                return Ok(new 
-                { 
-                    Success = true, 
-                    Message = message, 
-                    //ActiveSessions = _activeSessions.Count 
+                    conn = _sessions[session];
+
+                    if (conn == null
+                        || conn.State == System.Data.ConnectionState.Closed
+                        || conn.State == System.Data.ConnectionState.Broken)
+                    {
+                        conn = new SqlConnection(_сonnectionString);
+                        conn.Open();
+                        message = "Подключение успешно.";
+                    }
+                    else
+                    {
+                        message = "Подключение уже существует.";
+                    }
+                }                
+
+                return Ok(new
+                {
+                    Success = true,
+                    Message = message,
+                    ActiveSessions = _sessions.Count 
                 });
             }
             catch (Exception ex)
@@ -57,21 +77,34 @@ namespace WebApp4.Controllers
             }
         }
 
+
         [HttpGet]
         [Route("api/database/version")]
         public IHttpActionResult GetVersion()
         {
+            string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
+            string message = "Подключение...";
+
+            if (!_sessions.TryGetValue(session, out SqlConnection conn))
+            {
+                return BadRequest("Подключение к БД не установлено. Сначала вызовите /api/database/connect");
+            }
+
             try
             {
-                if (_connection == null || _connection.State != System.Data.ConnectionState.Open)
+                if (conn == null || conn.State != System.Data.ConnectionState.Open)
                 {
                     return BadRequest("Подключение к БД не установлено. Сначала вызовите /api/database/connect");
                 }
 
-                using (var cmd = new SqlCommand("SELECT @@VERSION", _connection))
+                using (var cmd = new SqlCommand("SELECT @@VERSION", conn))
                 {
                     var version = cmd.ExecuteScalar()?.ToString() ?? "Неизвестно";
-                    return Ok(new { Version = version });
+                    
+                    return Ok(new 
+                    { 
+                        Version = version 
+                    });
                 }
             }
             catch (Exception ex)
@@ -84,29 +117,38 @@ namespace WebApp4.Controllers
         [Route("api/database/disconnect")]
         public IHttpActionResult Disconnect()
         {
+            string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
+            string message = "Отключение...";
+
+            if (!_sessions.TryGetValue(session, out SqlConnection conn))
+            {
+                return BadRequest("Подключение к БД не установлено. Сначала вызовите /api/database/connect");
+            }
+
             try
             {
-                string message = "Отключение...";
-
-                if (_connection != null && _connection.State == System.Data.ConnectionState.Open)
+                if (conn != null && conn.State == System.Data.ConnectionState.Open)
                 {
-                    _connection.Close();
-                    _connection.Dispose();                    
+                    //System.Data.ConnectionState.
+                    conn.Close();
+                    conn.Dispose();                    
                     message = "Отключение выполнено.";
-                    //_activeSessions.Remove();
+                    
+                    _sessions.TryRemove(session, out conn);
+                    conn = null;                    
                 }
                 else
                 {
                     message = "Уже отключено.";
                 }
 
-                _connection = null;
+                
 
                 return Ok(new 
                 { 
                     Success = true, 
                     Message = message, 
-                    //ActiveSessions = _activeSessions.Count 
+                    ActiveSessions = _sessions.Count 
                 });
 
             }
@@ -185,10 +227,13 @@ namespace WebApp4.Controllers
 
                 _currentConnections = sessions.Count;
                 return Ok(new 
-                { 
-                    Success = true, 
+                {
+                    Success = true,
+                    ActiveSessions = _sessions.Count,
+                    ActiveSessionsList = _sessions,
+                    CurrentConnections = _currentConnections,                    
                     Message = sessions, 
-                    CurrentConnections = _currentConnections 
+                    
                 });
             }
             catch (Exception ex)
