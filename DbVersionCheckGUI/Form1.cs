@@ -39,7 +39,10 @@ namespace DbVersionCheckGUI
 
         private async void btnConnect_Click(object sender, EventArgs e)
         {
+            Button btn = ((Button)sender);
+            btn.Enabled = false;
             await CallApi("/api/database/connect");
+            btn.Enabled = true;
         }
         private async void btnGetVersion_Click(object sender, EventArgs e)
         {
@@ -78,25 +81,26 @@ namespace DbVersionCheckGUI
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var parsed = JToken.Parse(rawJson);
+                    var parsed = JToken.Parse(rawJson);                    
                     txtResult.Text = parsed.ToString(Formatting.Indented);
                     return;
                 }
 
 
-                if (endpoint.Contains("version"))
-                {
-                    rawJson = rawJson.Replace("\\\\", "\\");
+                //if (endpoint.Contains("version777"))
+                //{
+                //    rawJson = rawJson.Replace("\\\\", "\\");
 
-                    var versionObj = JsonConvert.DeserializeObject<dynamic>(rawJson);
+                //    var versionObj = JsonConvert.DeserializeObject<dynamic>(rawJson);
 
-                    string versionText = versionObj.Version?.ToString() ?? "Неизвестно";
-                    txtResult.Text = "Версия SQL Server: \n\n" + versionText;
-                }
+                //    string versionText = versionObj.Version?.ToString() ?? "Неизвестно";
+                //    txtResult.Text = "Версия SQL Server: \n\n" + versionText;
+                //}
                 else
                 {
                     var parsed = JToken.Parse(rawJson);
-                    txtResult.Text = parsed.ToString(Formatting.Indented);
+                    
+                    txtResult.Text = parsed.ToString(Formatting.Indented).Replace("\\n\\t", " ");
                 }
             }
             catch (JsonReaderException)

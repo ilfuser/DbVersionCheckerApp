@@ -38,7 +38,7 @@
             // btnConnect
             // 
             this.btnConnect.BackColor = System.Drawing.SystemColors.Control;
-            this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.8F);
+            this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnConnect.Location = new System.Drawing.Point(34, 58);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(196, 47);
@@ -50,19 +50,19 @@
             // txtResult
             // 
             this.txtResult.BackColor = System.Drawing.SystemColors.Window;
-            this.txtResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.txtResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.txtResult.Location = new System.Drawing.Point(293, 58);
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ReadOnly = true;
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResult.Size = new System.Drawing.Size(506, 332);
+            this.txtResult.Size = new System.Drawing.Size(596, 332);
             this.txtResult.TabIndex = 1;
             // 
             // btnGetVersion
             // 
             this.btnGetVersion.BackColor = System.Drawing.SystemColors.Control;
-            this.btnGetVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.8F);
+            this.btnGetVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnGetVersion.Location = new System.Drawing.Point(34, 141);
             this.btnGetVersion.Name = "btnGetVersion";
             this.btnGetVersion.Size = new System.Drawing.Size(196, 47);
@@ -74,7 +74,7 @@
             // btnDisconnect
             // 
             this.btnDisconnect.BackColor = System.Drawing.SystemColors.Control;
-            this.btnDisconnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.8F);
+            this.btnDisconnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnDisconnect.Location = new System.Drawing.Point(34, 226);
             this.btnDisconnect.Name = "btnDisconnect";
             this.btnDisconnect.Size = new System.Drawing.Size(196, 47);
@@ -86,7 +86,7 @@
             // btnSessions
             // 
             this.btnSessions.BackColor = System.Drawing.SystemColors.Control;
-            this.btnSessions.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.8F);
+            this.btnSessions.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnSessions.Location = new System.Drawing.Point(34, 343);
             this.btnSessions.Name = "btnSessions";
             this.btnSessions.Size = new System.Drawing.Size(196, 47);
@@ -99,7 +99,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(922, 438);
+            this.ClientSize = new System.Drawing.Size(922, 561);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnSessions);
             this.Controls.Add(this.btnDisconnect);

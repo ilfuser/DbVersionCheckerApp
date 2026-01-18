@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
 
-namespace WebApp4
+namespace DbWebApi
 {
     public class WebApiApplication : System.Web.HttpApplication
     {

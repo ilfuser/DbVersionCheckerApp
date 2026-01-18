@@ -12,13 +12,13 @@ using System.Web.Http;
 using System.Web.Services.Description;
 using System.Web.UI.WebControls;
 
-namespace WebApp4.Controllers
+namespace DbWebApi.Controllers
 {
     public class DbWebConnectionController : ApiController
     {
         //private static SqlConnection _connection;
         private static string _сonnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;        
-        private static int _currentConnections = 0;
+        private static int _currentConnNum = 0;
         private static ConcurrentDictionary<string, SqlConnection> _sessions = new ConcurrentDictionary<string, SqlConnection>();
 
 
@@ -66,6 +66,7 @@ namespace WebApp4.Controllers
 
                 return Ok(new
                 {
+                    Route = "api/database/connect",
                     Success = true,
                     Message = message,
                     ActiveSessions = _sessions.Count 
@@ -83,18 +84,21 @@ namespace WebApp4.Controllers
         public IHttpActionResult GetVersion()
         {
             string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
-            string message = "Подключение...";
-
-            if (!_sessions.TryGetValue(session, out SqlConnection conn))
-            {
-                return BadRequest("Подключение к БД не установлено. Сначала вызовите /api/database/connect");
-            }
 
             try
             {
-                if (conn == null || conn.State != System.Data.ConnectionState.Open)
+                if (!_sessions.TryGetValue(session, out SqlConnection conn)
+                    || (conn == null || conn.State != System.Data.ConnectionState.Open))
                 {
-                    return BadRequest("Подключение к БД не установлено. Сначала вызовите /api/database/connect");
+                    //return BadRequest("Подключение к БД не установлено. Сначала вызовите /api/database/connect");                    
+                    var errorDetails = new
+                    {
+                        Route = "api/database/version",
+                        Success = false,
+                        Message = "Подключение к БД не установлено. Сначала вызовите /api/database/connect",
+                        ActiveSessions = _sessions.Count
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorDetails);
                 }
 
                 using (var cmd = new SqlCommand("SELECT @@VERSION", conn))
@@ -102,7 +106,9 @@ namespace WebApp4.Controllers
                     var version = cmd.ExecuteScalar()?.ToString() ?? "Неизвестно";
                     
                     return Ok(new 
-                    { 
+                    {
+                        Route = "api/database/version",
+                        Success = true,
                         Version = version 
                     });
                 }
@@ -122,7 +128,14 @@ namespace WebApp4.Controllers
 
             if (!_sessions.TryGetValue(session, out SqlConnection conn))
             {
-                return BadRequest("Подключение к БД не установлено. Сначала вызовите /api/database/connect");
+                var errorDetails = new
+                {
+                    Route = "api/database/disconnect",
+                    Success = false,
+                    Message = "Подключение к БД не установлено. Сначала вызовите /api/database/connect",
+                    ActiveSessions = _sessions.Count
+                };
+                return Content(HttpStatusCode.BadRequest, errorDetails);
             }
 
             try
@@ -145,7 +158,8 @@ namespace WebApp4.Controllers
                 
 
                 return Ok(new 
-                { 
+                {
+                    Route = "api/database/disconnect",
                     Success = true, 
                     Message = message, 
                     ActiveSessions = _sessions.Count 
@@ -164,12 +178,10 @@ namespace WebApp4.Controllers
         public async Task<IHttpActionResult> CurrentSessions()
         {
             try
-            {
-                string message = "Подключение...";
+            {                
                 string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
                 var sessions = new List<Object>();
                 const string dbName = "master"; // "TestDB";
-
 
 
                 using (var conn = new SqlConnection(connectionString))
@@ -221,24 +233,22 @@ namespace WebApp4.Controllers
                                 });
                             }
                         }
-
                     }
                 }
 
-                _currentConnections = sessions.Count;
+                _currentConnNum = sessions.Count;
                 return Ok(new 
                 {
+                    Route = "api/database/current_sessions",
                     Success = true,
-                    ActiveSessions = _sessions.Count,
-                    ActiveSessionsList = _sessions
-                    .Select( 
-                        x => new { 
-                            WebSessionId = x.Key, 
-                            Sql_ClienConnectionId = x.Value.ClientConnectionId
-                        } )
-                    .ToArray(),                    
-                    CurrentConnections = _currentConnections,                    
-                    Message = sessions, 
+                    MyActiveSessions = _sessions.Count,
+                    MyActiveSessionsList = _sessions.Select(x => new 
+                    { 
+                        WebSessionId = x.Key, 
+                        Sql_ClienConnectionId = x.Value.ClientConnectionId
+                    }).ToArray(),
+                    AllOpenedSQLConnections = _currentConnNum,                    
+                    SQLConnectionsDetails = sessions, 
                     
                 });
             }
