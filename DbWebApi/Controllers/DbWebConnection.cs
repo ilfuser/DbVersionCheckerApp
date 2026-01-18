@@ -194,7 +194,7 @@ namespace WebApp4.Controllers
                             AND database_id = DB_ID(@DatabaseName)
                             --AND status = 'sleeping'
                             --AND last_request_end_time < DATEADD(MINUTE, -10, GETDATE()) -- простой > 10 мин
-                        ORDER BY last_request_end_time ASC";
+                        ORDER BY last_request_end_time ASC";                   
 
 
                     using (var command = conn.CreateCommand())
@@ -230,7 +230,13 @@ namespace WebApp4.Controllers
                 {
                     Success = true,
                     ActiveSessions = _sessions.Count,
-                    ActiveSessionsList = _sessions,
+                    ActiveSessionsList = _sessions
+                    .Select( 
+                        x => new { 
+                            WebSessionId = x.Key, 
+                            Sql_ClienConnectionId = x.Value.ClientConnectionId
+                        } )
+                    .ToArray(),                    
                     CurrentConnections = _currentConnections,                    
                     Message = sessions, 
                     
