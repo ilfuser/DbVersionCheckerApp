@@ -128,9 +128,6 @@ namespace DbVersionCheckGUI
             await CheckedCalculate();
         }
 
-        private async void rbDisconnect_CheckedChanged(object sender, EventArgs e)
-        {
-            await CheckedCalculate();
-        }
+        
     }
 }

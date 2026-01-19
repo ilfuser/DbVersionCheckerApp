@@ -53,9 +53,9 @@
             // 
             this.btnGetVersion.BackColor = System.Drawing.SystemColors.Control;
             this.btnGetVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnGetVersion.Location = new System.Drawing.Point(226, 397);
+            this.btnGetVersion.Location = new System.Drawing.Point(202, 397);
             this.btnGetVersion.Name = "btnGetVersion";
-            this.btnGetVersion.Size = new System.Drawing.Size(196, 47);
+            this.btnGetVersion.Size = new System.Drawing.Size(227, 47);
             this.btnGetVersion.TabIndex = 0;
             this.btnGetVersion.Text = "Узнать версию!";
             this.btnGetVersion.UseVisualStyleBackColor = false;
@@ -65,9 +65,9 @@
             // 
             this.btnSessions.BackColor = System.Drawing.SystemColors.Control;
             this.btnSessions.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSessions.Location = new System.Drawing.Point(226, 465);
+            this.btnSessions.Location = new System.Drawing.Point(202, 463);
             this.btnSessions.Name = "btnSessions";
-            this.btnSessions.Size = new System.Drawing.Size(196, 52);
+            this.btnSessions.Size = new System.Drawing.Size(227, 74);
             this.btnSessions.TabIndex = 0;
             this.btnSessions.Text = "Узнать об открытых подключениях к БД";
             this.btnSessions.UseVisualStyleBackColor = false;
@@ -85,7 +85,6 @@
             this.rbDisconnect.TabStop = true;
             this.rbDisconnect.Text = "Отключено";
             this.rbDisconnect.UseVisualStyleBackColor = false;
-            this.rbDisconnect.CheckedChanged += new System.EventHandler(this.rbDisconnect_CheckedChanged);
             // 
             // rbConnect
             // 
