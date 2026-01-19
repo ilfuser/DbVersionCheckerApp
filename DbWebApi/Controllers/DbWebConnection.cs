@@ -15,8 +15,7 @@ using System.Web.UI.WebControls;
 namespace DbWebApi.Controllers
 {
     public class DbWebConnectionController : ApiController
-    {
-        //private static SqlConnection _connection;
+    {        
         private static string _сonnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;        
         private static int _currentConnNum = 0;
         private static ConcurrentDictionary<string, SqlConnection> _sessions = new ConcurrentDictionary<string, SqlConnection>();
@@ -26,12 +25,12 @@ namespace DbWebApi.Controllers
         [Route("api/database/connect")]
         public IHttpActionResult Connect()
         {
-            string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
-            string message = "Подключение...";
-            SqlConnection conn = null;
-
             try
             {
+                string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
+                string message = "Подключение...";
+                SqlConnection conn = null;
+
                 if (!_sessions.ContainsKey(session))
                 {
                     conn = new SqlConnection(_сonnectionString);
@@ -83,10 +82,10 @@ namespace DbWebApi.Controllers
         [Route("api/database/version")]
         public IHttpActionResult GetVersion()
         {
-            string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
-
             try
             {
+                string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
+
                 if (!_sessions.TryGetValue(session, out SqlConnection conn)
                     || (conn == null || conn.State != System.Data.ConnectionState.Open))
                 {
@@ -123,23 +122,24 @@ namespace DbWebApi.Controllers
         [Route("api/database/disconnect")]
         public IHttpActionResult Disconnect()
         {
-            string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
-            string message = "Отключение...";
-
-            if (!_sessions.TryGetValue(session, out SqlConnection conn))
-            {
-                var errorDetails = new
-                {
-                    Route = "api/database/disconnect",
-                    Success = false,
-                    Message = "Подключение к БД не установлено. Сначала вызовите /api/database/connect",
-                    ActiveSessions = _sessions.Count
-                };
-                return Content(HttpStatusCode.BadRequest, errorDetails);
-            }
-
             try
             {
+                string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
+                string message = "Отключение...";
+
+                if (!_sessions.TryGetValue(session, out SqlConnection conn))
+                {
+                    var errorDetails = new
+                    {
+                        Route = "api/database/disconnect",
+                        Success = false,
+                        Message = "Подключение к БД не установлено. Сначала вызовите /api/database/connect",
+                        ActiveSessions = _sessions.Count
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorDetails);
+                }
+
+            
                 if (conn != null && conn.State == System.Data.ConnectionState.Open)
                 {
                     //System.Data.ConnectionState.
@@ -257,7 +257,8 @@ namespace DbWebApi.Controllers
                 return InternalServerError(new Exception("Ошибка подключения: " + ex.Message));
             }
         
-        } 
+        }
+        
     }
     
 }
