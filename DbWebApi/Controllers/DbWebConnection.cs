@@ -25,12 +25,12 @@ namespace DbWebApi.Controllers
         [Route("api/database/connect")]
         public IHttpActionResult Connect()
         {
-            string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
-            string message = "Подключение...";
-            SqlConnection conn = null;
-
             try
             {
+                string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
+                string message = "Подключение...";
+                SqlConnection conn = null;
+
                 if (!_sessions.ContainsKey(session))
                 {
                     conn = new SqlConnection(_сonnectionString);
@@ -82,10 +82,10 @@ namespace DbWebApi.Controllers
         [Route("api/database/version")]
         public IHttpActionResult GetVersion()
         {
-            string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
-
             try
             {
+                string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
+
                 if (!_sessions.TryGetValue(session, out SqlConnection conn)
                     || (conn == null || conn.State != System.Data.ConnectionState.Open))
                 {
@@ -122,23 +122,24 @@ namespace DbWebApi.Controllers
         [Route("api/database/disconnect")]
         public IHttpActionResult Disconnect()
         {
-            string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
-            string message = "Отключение...";
-
-            if (!_sessions.TryGetValue(session, out SqlConnection conn))
-            {
-                var errorDetails = new
-                {
-                    Route = "api/database/disconnect",
-                    Success = false,
-                    Message = "Подключение к БД не установлено. Сначала вызовите /api/database/connect",
-                    ActiveSessions = _sessions.Count
-                };
-                return Content(HttpStatusCode.BadRequest, errorDetails);
-            }
-
             try
             {
+                string session = Request.Headers.GetValues("X-Session-ID").FirstOrDefault();
+                string message = "Отключение...";
+
+                if (!_sessions.TryGetValue(session, out SqlConnection conn))
+                {
+                    var errorDetails = new
+                    {
+                        Route = "api/database/disconnect",
+                        Success = false,
+                        Message = "Подключение к БД не установлено. Сначала вызовите /api/database/connect",
+                        ActiveSessions = _sessions.Count
+                    };
+                    return Content(HttpStatusCode.BadRequest, errorDetails);
+                }
+
+            
                 if (conn != null && conn.State == System.Data.ConnectionState.Open)
                 {
                     //System.Data.ConnectionState.
@@ -257,31 +258,7 @@ namespace DbWebApi.Controllers
             }
         
         }
-
-        [HttpGet]
-        [Route("index.html")]
-        public IHttpActionResult Index()
-        {
-            string html = @"
-                <!DOCTYPE html>
-                <html lang='ru'>
-                <head>
-                    <meta charset='utf-8' />
-                    <title>О нас</title>
-                    <style>
-                        body { font-family: Georgia, serif; background: #eef; padding: 20px; }
-                        h1 { color: #0066cc; }
-                    </style>
-                </head>
-                <body>
-                    <h1>О нас</h1>
-                    <p>Мы — команда разработчиков, которая любит чистый код.</p>
-                    <a href='/'>← Вернуться на главную</a>
-                </body>
-                </html>";
-
-            return Content(HttpStatusCode.OK, html);
-        }
+        
     }
     
 }

@@ -87,15 +87,17 @@ namespace DbVersionCheckGUI
                 }
 
 
-                //if (endpoint.Contains("version777"))
-                //{
-                //    rawJson = rawJson.Replace("\\\\", "\\");
+                if (endpoint.Contains("version"))
+                {
+                    var parsed = JToken.Parse(rawJson);
+                    txtResult.Text = parsed.ToString(Formatting.Indented).Replace("\\n\\t", " ");
 
-                //    var versionObj = JsonConvert.DeserializeObject<dynamic>(rawJson);
+                    var versionObj = JsonConvert.DeserializeObject<dynamic>(rawJson);
 
-                //    string versionText = versionObj.Version?.ToString() ?? "Неизвестно";
-                //    txtResult.Text = "Версия SQL Server: \n\n" + versionText;
-                //}
+                    string versionText = versionObj.Version?.ToString() ?? "Неизвестно";
+                    versionText = "Версия SQL Server: \n\n" + versionText;
+                    MessageBox.Show(versionText);
+                }
                 else
                 {
                     var parsed = JToken.Parse(rawJson);
@@ -111,6 +113,24 @@ namespace DbVersionCheckGUI
             {
                 txtResult.Text = "Ошибка:\n" + ex.Message;
             }
+        }
+
+        private async Task CheckedCalculate()
+        {
+            if (rbConnect.Checked)
+                await CallApi("/api/database/connect");
+            else
+                await CallApi("/api/database/disconnect");
+        }
+
+        private async void rbConnect_CheckedChanged(object sender, EventArgs e)
+        {
+            await CheckedCalculate();
+        }
+
+        private async void rbDisconnect_CheckedChanged(object sender, EventArgs e)
+        {
+            await CheckedCalculate();
         }
     }
 }

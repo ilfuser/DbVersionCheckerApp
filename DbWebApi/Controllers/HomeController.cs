@@ -10,14 +10,13 @@ namespace WebApp4.Controllers
     public class HomeController : Controller
     {        
         public ActionResult Index()
-        {
-            //return Content("hello!");
+        {            
             string html = @"
                 <!DOCTYPE html>
                 <html lang='ru'>
                 <head>
                     <meta charset='utf-8' />
-                    <title>О нас</title>
+                    <title>DbCheckerApp</title>
                     <style>
                         body { font-family: Arial, serif; background: #eef; padding: 20px; }
                         h1 { color: #0066cc; }

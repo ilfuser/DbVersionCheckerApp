@@ -28,99 +28,118 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnConnect = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.TextBox();
             this.btnGetVersion = new System.Windows.Forms.Button();
-            this.btnDisconnect = new System.Windows.Forms.Button();
             this.btnSessions = new System.Windows.Forms.Button();
+            this.rbDisconnect = new System.Windows.Forms.RadioButton();
+            this.rbConnect = new System.Windows.Forms.RadioButton();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // btnConnect
-            // 
-            this.btnConnect.BackColor = System.Drawing.SystemColors.Control;
-            this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnConnect.Location = new System.Drawing.Point(34, 58);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(196, 47);
-            this.btnConnect.TabIndex = 0;
-            this.btnConnect.Text = "Connect";
-            this.btnConnect.UseVisualStyleBackColor = false;
-            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
             // txtResult
             // 
             this.txtResult.BackColor = System.Drawing.SystemColors.Window;
             this.txtResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.txtResult.Location = new System.Drawing.Point(293, 58);
+            this.txtResult.Location = new System.Drawing.Point(31, 12);
             this.txtResult.Multiline = true;
             this.txtResult.Name = "txtResult";
             this.txtResult.ReadOnly = true;
             this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtResult.Size = new System.Drawing.Size(596, 332);
+            this.txtResult.Size = new System.Drawing.Size(596, 296);
             this.txtResult.TabIndex = 1;
             // 
             // btnGetVersion
             // 
             this.btnGetVersion.BackColor = System.Drawing.SystemColors.Control;
             this.btnGetVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnGetVersion.Location = new System.Drawing.Point(34, 141);
+            this.btnGetVersion.Location = new System.Drawing.Point(226, 397);
             this.btnGetVersion.Name = "btnGetVersion";
             this.btnGetVersion.Size = new System.Drawing.Size(196, 47);
             this.btnGetVersion.TabIndex = 0;
-            this.btnGetVersion.Text = "Get Version";
+            this.btnGetVersion.Text = "Узнать версию!";
             this.btnGetVersion.UseVisualStyleBackColor = false;
             this.btnGetVersion.Click += new System.EventHandler(this.btnGetVersion_Click);
-            // 
-            // btnDisconnect
-            // 
-            this.btnDisconnect.BackColor = System.Drawing.SystemColors.Control;
-            this.btnDisconnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDisconnect.Location = new System.Drawing.Point(34, 226);
-            this.btnDisconnect.Name = "btnDisconnect";
-            this.btnDisconnect.Size = new System.Drawing.Size(196, 47);
-            this.btnDisconnect.TabIndex = 0;
-            this.btnDisconnect.Text = "Disconnect";
-            this.btnDisconnect.UseVisualStyleBackColor = false;
-            this.btnDisconnect.Click += new System.EventHandler(this.btnDisconnect_Click);
             // 
             // btnSessions
             // 
             this.btnSessions.BackColor = System.Drawing.SystemColors.Control;
             this.btnSessions.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSessions.Location = new System.Drawing.Point(34, 343);
+            this.btnSessions.Location = new System.Drawing.Point(226, 465);
             this.btnSessions.Name = "btnSessions";
-            this.btnSessions.Size = new System.Drawing.Size(196, 47);
+            this.btnSessions.Size = new System.Drawing.Size(196, 52);
             this.btnSessions.TabIndex = 0;
-            this.btnSessions.Text = "GetActiveSessions";
+            this.btnSessions.Text = "Узнать об открытых подключениях к БД";
             this.btnSessions.UseVisualStyleBackColor = false;
             this.btnSessions.Click += new System.EventHandler(this.btnSessions_Click);
+            // 
+            // rbDisconnect
+            // 
+            this.rbDisconnect.AutoSize = true;
+            this.rbDisconnect.BackColor = System.Drawing.Color.DarkSalmon;
+            this.rbDisconnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.rbDisconnect.Location = new System.Drawing.Point(135, 21);
+            this.rbDisconnect.Name = "rbDisconnect";
+            this.rbDisconnect.Size = new System.Drawing.Size(141, 29);
+            this.rbDisconnect.TabIndex = 2;
+            this.rbDisconnect.TabStop = true;
+            this.rbDisconnect.Text = "Отключено";
+            this.rbDisconnect.UseVisualStyleBackColor = false;
+            this.rbDisconnect.CheckedChanged += new System.EventHandler(this.rbDisconnect_CheckedChanged);
+            // 
+            // rbConnect
+            // 
+            this.rbConnect.AutoSize = true;
+            this.rbConnect.BackColor = System.Drawing.Color.GreenYellow;
+            this.rbConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.rbConnect.Location = new System.Drawing.Point(303, 21);
+            this.rbConnect.Name = "rbConnect";
+            this.rbConnect.Size = new System.Drawing.Size(151, 29);
+            this.rbConnect.TabIndex = 2;
+            this.rbConnect.TabStop = true;
+            this.rbConnect.Text = "Подключено";
+            this.rbConnect.UseVisualStyleBackColor = false;
+            this.rbConnect.CheckedChanged += new System.EventHandler(this.rbConnect_CheckedChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.rbDisconnect);
+            this.groupBox1.Controls.Add(this.rbConnect);
+            this.groupBox1.Location = new System.Drawing.Point(31, 328);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(596, 63);
+            this.groupBox1.TabIndex = 3;
+            this.groupBox1.TabStop = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(922, 561);
+            this.ClientSize = new System.Drawing.Size(663, 560);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnSessions);
-            this.Controls.Add(this.btnDisconnect);
             this.Controls.Add(this.btnGetVersion);
-            this.Controls.Add(this.btnConnect);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "Form1";
-            this.Text = "Get Version Prototype";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Получаем версию БД быстро и просто!";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosed);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.TextBox txtResult;
         private System.Windows.Forms.Button btnGetVersion;
-        private System.Windows.Forms.Button btnDisconnect;
         private System.Windows.Forms.Button btnSessions;
+        private System.Windows.Forms.RadioButton rbDisconnect;
+        private System.Windows.Forms.RadioButton rbConnect;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
 
