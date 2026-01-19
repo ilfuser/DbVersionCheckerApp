@@ -15,8 +15,7 @@ using System.Web.UI.WebControls;
 namespace DbWebApi.Controllers
 {
     public class DbWebConnectionController : ApiController
-    {
-        //private static SqlConnection _connection;
+    {        
         private static string _сonnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;        
         private static int _currentConnNum = 0;
         private static ConcurrentDictionary<string, SqlConnection> _sessions = new ConcurrentDictionary<string, SqlConnection>();
@@ -257,7 +256,32 @@ namespace DbWebApi.Controllers
                 return InternalServerError(new Exception("Ошибка подключения: " + ex.Message));
             }
         
-        } 
+        }
+
+        [HttpGet]
+        [Route("index.html")]
+        public IHttpActionResult Index()
+        {
+            string html = @"
+                <!DOCTYPE html>
+                <html lang='ru'>
+                <head>
+                    <meta charset='utf-8' />
+                    <title>О нас</title>
+                    <style>
+                        body { font-family: Georgia, serif; background: #eef; padding: 20px; }
+                        h1 { color: #0066cc; }
+                    </style>
+                </head>
+                <body>
+                    <h1>О нас</h1>
+                    <p>Мы — команда разработчиков, которая любит чистый код.</p>
+                    <a href='/'>← Вернуться на главную</a>
+                </body>
+                </html>";
+
+            return Content(HttpStatusCode.OK, html);
+        }
     }
     
 }
